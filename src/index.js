@@ -1,3 +1,3 @@
-import loadPage from "./loadPage";
+import loadPage from "./interfazGrafica";
 
 loadPage();
