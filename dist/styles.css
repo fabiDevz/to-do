@@ -14,30 +14,21 @@
 }
 
 #header {
-    background-color: rgb(71, 127, 54);
+    background-color: rgb(110, 166, 93);
     grid-area: header;
 
 }
 
 #side-bar {
-    background-color: rgb(69, 156, 61);
+    background-color: rgb(122, 163, 110);
     grid-area: side-bar;
     display: flex;
     flex-direction: column;
     padding: 40px;
 
-    ul {
-        list-style-type: none;
-        padding-left: 0;
-
-        li {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    h2{
+        margin-bottom: 10px;
     }
-
-
 }
 
 #main-content {
@@ -48,6 +39,28 @@
 
 }
 
+.btn-side-bar{
+    
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    width: 200px;
+    background-color: transparent;
+    font-size: 20px;
+    border: none;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    color: rgb(255, 255, 114);
+    span{
+        margin-right: 5px;
+    }
+}
+
+.btn-side-bar:hover{
+    background-color: rgb(92, 157, 72);
+    transition: background-color 0.3s ease; 
+    cursor: pointer;
+}
 
 
 .main-form-tarea {

@@ -1,5 +1,15 @@
 import ListaTarea from "./listaTarea";
 import Tarea from "./tarea";
+import { format } from 'date-fns';
+
+let listaFull = new ListaTarea('Todo');
+
+let aux = new Tarea('Hacer los deberes del hogar', 'Sin Fecha', 'Alta');
+listaFull.setListaTarea(aux);
+
+let listaHoy = new ListaTarea('Hoy');
+let listaSemanal = new ListaTarea('Semanal');
+let listaPrioridad = new ListaTarea('Prioritario');
 
 function sideBar() {
     const sideBar = document.getElementById('side-bar');
@@ -47,15 +57,18 @@ function main() {
     const main = document.getElementById('main-content');
     const listaDiv = document.getElementById('main-lista-tareas');
 
-    const btnMain = crearButton('Agregar tarea', "<span class='material-symbols-outlined'>add_circle</span>");
-    btnMain.classList.add('btn-main');
-
-    btnMain.addEventListener('click', () => {
-        formularioTarea()
-    });
+    /*  const btnMain = crearButton('Agregar tarea', "<span class='material-symbols-outlined'>add_circle</span>");
+     btnMain.classList.add('btn-main');
+ 
+     btnMain.addEventListener('click', () => {
+         formularioTarea();
+         limpiarBtn();
+     }); */
 
     main.appendChild(listaDiv);
-    main.appendChild(btnMain);
+    btnTarea();
+    mostrarTareas();
+    //main.appendChild(btnMain);
 }
 
 function header() {
@@ -67,15 +80,6 @@ function header() {
 
     header.appendChild(titulo);
 
-}
-
-function inicializarListaTareas() {
-    let listaFull = new ListaTarea('Todo');
-    let listaHoy = new ListaTarea('Hoy');
-    let listaSemanal = new ListaTarea('Semanal');
-    let listaPrioridad = new ListaTarea('Prioritario');
-
-    console.log(listaHoy.getTitulo() + '-- :' + listaHoy.getListaTareas());
 }
 
 function formularioTarea() {
@@ -125,19 +129,30 @@ function formularioTarea() {
     inputFecha.type = 'date';
     inputPrioridad.id = 'input-prioridad';
 
+    const fechaHoy = format(new Date(), 'yyyy-MM-dd');
     labelNombre.textContent = 'Tarea';
     labelFecha.textContent = 'Fecha de finalización';
     labelPrioridad.textContent = 'Nivel de prioridad';
     btnAceptar.textContent = 'Agregar';
     btnCancelar.textContent = 'Cancelar';
+    inputFecha.value = fechaHoy;
+
 
     btnAceptar.classList.add('btn-aceptar');
     btnCancelar.classList.add('btn-cancelar');
 
-    btnAceptar.addEventListener('click', () => {
-        validarForm();
 
+    btnAceptar.addEventListener('click', () => {
+        if (validarForm()) {
+            btnTarea();
+        }
     });
+
+    btnCancelar.addEventListener('click', () => {
+        limpiarForm();
+        btnTarea();
+
+    })
 
     formBtnArea.appendChild(btnAceptar);
     formBtnArea.appendChild(btnCancelar);
@@ -163,14 +178,93 @@ function validarForm() {
     const fecha = document.getElementById('input-fecha');
     const prioridad = document.getElementById('input-prioridad');
 
-    console.log(nombre.value);
-    console.log(fecha.value);
-    console.log(prioridad.value);
+    if (nombre.value != '') {
+        agregarTarea(nombre.value, fecha.value, prioridad.value);
+        limpiarForm();
+        mostrarTareas();
+
+        return true;
+    } else {
+        alert('Por favor rellene el campo tarea');
+    }
+    return false;
 }
 
+function agregarTarea(nombre, fecha, prioridad) {
+
+    fecha = fecha.trim() === '' ? 'Sin fecha' : fecha;
+
+    let tarea = new Tarea(nombre, fecha, prioridad);
+    listaFull.setListaTarea(tarea);
+    console.log(listaFull.getListaTareas());
+}
+
+function mostrarTareas() {
+    listaFull.getListaTareas().forEach((task) => {
+
+        const mainLista = document.getElementById('main-lista-tareas');
+        const tareaDiv = document.createElement('div');
+        const tareaText = document.createElement('span');
+        const tareaDate = document.createElement('span');
+        const tareaPriority = document.createElement('span');
+
+        tareaText.textContent = task.getTitulo();
+        tareaDate.textContent = task.getFecha();
+        tareaPriority.textContent = task.getPrioridad();
+
+        tareaDiv.classList.add('tarea-container');
+
+        tareaDiv.appendChild(tareaText);
+        tareaDiv.appendChild(tareaDate);
+        tareaDiv.appendChild(tareaPriority);
+
+        const btnEdit = crearButton('', "<span class='material-symbols-outlined'>edit</span>");
+        btnEdit.onclick = () => editarTarea();
+        btnEdit.classList.add('btn-editar-tarea');
+        tareaDiv.appendChild(btnEdit);
+
+        const btnDelete = crearButton('', "<span class='material-symbols-outlined'>delete</span>");
+        btnDelete.onclick = () => eliminarTarea();
+        btnDelete.classList.add('btn-eliminar-tarea');
+        tareaDiv.appendChild(btnDelete);
+
+        mainLista.appendChild(tareaDiv);
+
+
+
+
+
+
+    });
+}
+
+function limpiarForm() {
+    const mainForm = document.getElementById('main-lista-tareas');
+
+    while (mainForm.firstChild) {
+        mainForm.removeChild(mainForm.firstChild);
+    }
+}
+
+function limpiarBtn() {
+    const btnMain = document.querySelector('.btn-main');
+    btnMain.remove();
+}
+
+function btnTarea() {
+    const main = document.getElementById('main-content');
+    const btnMain = crearButton('Agregar tarea', "<span class='material-symbols-outlined'>add_circle</span>");
+    btnMain.classList.add('btn-main');
+    btnMain.addEventListener('click', () => {
+        formularioTarea();
+        limpiarBtn();
+    });
+
+    main.appendChild(btnMain);
+
+}
 function loadPage() {
 
-    inicializarListaTareas();
 
     header();
     sideBar();

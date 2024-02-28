@@ -1,22 +1,15 @@
+import Tarea from "./tarea";
+
 export default class ListaTarea{
-    constructor(titulo, tareas = [])
+    constructor()
     {
-        this._titulo = titulo;
-        this._tareas = tareas;
+        this._tareas = [];
     }
 
-    getTitulo()
-    {
-        return this._titulo;
-    }
 
     getListaTareas()
     {
         return this._tareas;
-    }
-
-    setTitulo(nombre){
-        this._titulo = nombre;
     }
 
     setListaTarea(tarea)
