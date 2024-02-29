@@ -16,4 +16,9 @@ export default class ListaTarea{
     {   
         this._tareas.push(tarea);
     }
+
+    setListaTareas(lista)
+    {
+        this._tareas = lista;
+    }
 }
