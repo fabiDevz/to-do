@@ -31,14 +31,6 @@
     }
 }
 
-#main-content {
-    background-color: rgb(150, 207, 167);
-    grid-area: main;
-    display: flex;
-    flex-direction: column;
-
-}
-
 .btn-side-bar{
     
     display: flex;
@@ -62,6 +54,13 @@
     cursor: pointer;
 }
 
+#main-content {
+    background-color: rgb(150, 207, 167);
+    grid-area: main;
+    display: flex;
+    flex-direction: column;
+
+}
 
 .main-form-tarea {
     padding-left: 100px;
@@ -81,12 +80,6 @@
         background-color: white;
         border: none;
     }
-}
-#input-fecha, #input-prioridad{
-    text-align: center;
-}
-#input-fecha:hover, #input-prioridad:hover{
-    cursor: pointer;
 }
 
 .btn-main {
@@ -116,6 +109,15 @@
     transition: background-color 0.3s ease; 
     background-color: rgb(100, 137, 111);
 }
+
+#input-fecha, #input-prioridad{
+    text-align: center;
+}
+#input-fecha:hover, #input-prioridad:hover{
+    cursor: pointer;
+}
+
+
 
 .main-form-InputArea {
     display: grid;
@@ -148,6 +150,12 @@
     }
 }
 
+#main-btn-area{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .btn-aceptar {
     background-color: rgb(163, 255, 163);
 }
@@ -164,3 +172,58 @@
     transition: background-color 0.3s ease; 
     background-color: rgb(255, 59, 59);
 }
+
+.tarea-container{
+    width: 80vw;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    padding-left: 20px;
+    height: 30px;
+    background-color: transparent;
+    display: grid;
+    grid-template-columns: 8fr 1fr 1fr 1fr 1fr;
+    justify-content: center;
+    align-items: center;
+    span{
+        display: flex;
+        justify-content: left;
+        align-items: center;
+    }
+}
+
+.tarea-container:hover{
+    background-color: rgb(165, 164, 164);
+    transition: background-color 0.3s ease; 
+}
+
+.btn-editar-tarea{
+    border: none;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+}
+
+.btn-editar-tarea:hover{
+    background-color: rgb(98, 243, 122);
+    transition: background-color 0.3s ease; 
+}
+
+.btn-eliminar-tarea{
+    border:none;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+}
+
+.btn-eliminar-tarea:hover{
+    background-color: rgb(232, 39, 39);
+    transition: background-color 0.3s ease; 
+}
+
