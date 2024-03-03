@@ -156,11 +156,15 @@
     align-items: center;
 }
 
-.btn-aceptar {
+.btn-aceptar, .btn-aceptar-editar {
     background-color: rgb(163, 255, 163);
 }
 
 .btn-aceptar:hover{
+    transition: background-color 0.3s ease; 
+    background-color: rgb(69, 245, 69);
+}
+.btn-aceptar-editar:hover{
     transition: background-color 0.3s ease; 
     background-color: rgb(69, 245, 69);
 }

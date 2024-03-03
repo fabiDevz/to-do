@@ -3,6 +3,7 @@ import Tarea from "./tarea";
 import { format } from 'date-fns';
 
 let listaTotal = new ListaTarea('Todo');
+let editar = false;
 
 let aux = new Tarea('Hacer los deberes del hogar', 'Sin Fecha', 'Alta');
 listaTotal.setListaTarea(aux);
@@ -78,6 +79,8 @@ function setEventosMain() {
     const btnAceptar = document.querySelector('.btn-aceptar');
     const btnCancelar = document.querySelector('.btn-cancelar');
 
+    
+
     if (btnMain) {
         btnMain.addEventListener('click', () => {
             construirFormularioMain();
@@ -98,6 +101,9 @@ function setEventosMain() {
             limpiarFormulario();
         });
     }
+
+   
+
 
 
 }
@@ -162,10 +168,12 @@ function construirFormularioMain() {
         //Form: botones 'Agregar''Cancelar'
         const btnAceptar = document.createElement('button');
         const btnCancelar = document.createElement('button');
-        btnAceptar.textContent = 'Agregar';
+
         btnCancelar.textContent = 'Cancelar';
 
-        btnAceptar.classList.add('btn-aceptar');
+        //verificamos si el formulario es para editar
+        btnAceptar.classList.add(editar ? 'btn-aceptar-editar' : 'btn-aceptar');
+        btnAceptar.textContent = editar ? "Editar" : btnAceptar.textContent = 'Agregar';
         btnCancelar.classList.add('btn-cancelar');
 
         //Clases para estilos Css
@@ -241,7 +249,7 @@ function mostrarTareas() {
         tareaDiv.appendChild(tareaPriority);
 
         const btnEdit = crearButton('', "<span class='material-symbols-outlined'>edit</span>");
-        btnEdit.onclick = () => editarTarea(task.getTitulo());
+        btnEdit.onclick = () => abrirEdicion(task.getTitulo());
         btnEdit.classList.add('btn-editar-tarea');
         tareaDiv.appendChild(btnEdit);
 
@@ -278,23 +286,26 @@ function eliminarTarea(titulo) {
     mostrarTareas();
 }
 
-function editarTarea(nombre) {
+function abrirEdicion(nombre) {
     const form = document.querySelector('.main-form-tarea');
+    
 
-
+    editar = true;
     let tarea = listaTotal.getListaTareas().find(item => item.getTitulo() === nombre);
-    console.log('tarea : ' + nombre);
+    console.log('tarea : ' + tarea.getTitulo());
 
-    if(!form)
+    if(form)
     {
-        construirFormularioMain();
+        limpiarFormulario();
     }
+        construirFormularioMain();
+        const btnEditar = document.querySelector('.btn-aceptar-editar');
+    
 
-    //capturamos los inputs existentes del formulario
     const inputNombre = document.getElementById('input-nombre');
     const inputFecha = document.getElementById('input-fecha');
     const inputPrioridad = document.getElementById('input-prioridad');
-    construirFormularioMain();
+
     //asignamos a los input los datos de la tarea a editar
     inputNombre.value = tarea.getTitulo();
     inputPrioridad.value = tarea.getPrioridad();
@@ -307,20 +318,48 @@ function editarTarea(nombre) {
     } else {
         inputFecha.value = tarea.getFecha();
     }
-   
-    //falta agregar la edicion de la tarea
+   const indice = listaTotal.getListaTareas().findIndex(objeto => objeto.getTitulo() === inputNombre.value);
 
-        
+   console.log('indice capturado : '+indice);
+    if (btnEditar) {
+        btnEditar.addEventListener('click', () => {
+            if (editarTarea(indice)) {
+                mostrarTareas();
+                limpiarFormulario();
+            }
 
-
-        
-
-     
-        
-
+        });
+    }
     
 }
 
+function editarTarea(indice)
+{
+console.log('estoy llegando aqui al editar');
+    const inputNombre = document.getElementById('input-nombre');
+    const inputFecha = document.getElementById('input-fecha');
+    const inputPrioridad = document.getElementById('input-prioridad');
+
+    let nombre = inputNombre.value;
+    let fecha = inputFecha.value;
+    let prioridad = inputPrioridad.value;
+
+    if (listaTotal.getListaTareas().find(task => task.getTitulo() === nombre)) {
+        alert('Ya existe esa tarea.');
+        return false
+    }
+    //verificamos si existe una fecha
+    fecha = fecha.trim() === '' ? 'Sin fecha' : fecha;
+    //creamos el objeto tarea y agregamos a la lista
+   
+    let tareaNueva = new Tarea();
+    tareaNueva.setTitulo(nombre);
+    tareaNueva.setFechaTermino(fecha);
+    tareaNueva.setPrioridad(prioridad);
+    listaTotal.editListaTareas(indice,tareaNueva );
+    editar = false;
+    return true;
+}
 function loadPage() {
     header();
     sideBar();

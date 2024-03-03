@@ -21,4 +21,9 @@ export default class ListaTarea{
     {
         this._tareas = lista;
     }
+    
+    editListaTareas(indiceTareaEditar, tareaNueva)
+    {
+       return this._tareas.splice(indiceTareaEditar, 1, tareaNueva);
+    }
 }
