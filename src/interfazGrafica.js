@@ -1,6 +1,6 @@
 import ListaTarea from "./listaTarea";
 import Tarea from "./tarea";
-import { format } from 'date-fns';
+import { format, startOfWeek, endOfWeek, isWithinInterval} from 'date-fns';
 
 let listaTotal = new ListaTarea('Todo');
 let editar = false;
@@ -29,13 +29,12 @@ function sideBar() {
     const proyectoSideBar = document.createElement('h2');
 
     const elementosBandeja = [
-        { titulo: 'Principal', icon: "<span class='material-symbols-outlined'>task</span>" },
+        { titulo: 'Bandeja', icon: "<span class='material-symbols-outlined'>task</span>" },
         { titulo: 'Hoy', icon: "<span class='material-symbols-outlined'>today</span>" },
-        { titulo: 'Semanal', icon: "<span class='material-symbols-outlined'>date_range </span>" },
-        { titulo: 'Importancia', icon: "<span class='material-symbols-outlined'>priority_high</span>" }];
+        { titulo: 'Semanal', icon: "<span class='material-symbols-outlined'>date_range </span>" }];
 
     //texto a elementos 
-    bandejaSideBar.textContent = 'Bandeja';
+    bandejaSideBar.textContent = 'Principal';
     proyectoSideBar.textContent = 'Proyectos';
 
     sideBar.appendChild(bandejaSideBar);
@@ -43,6 +42,10 @@ function sideBar() {
     elementosBandeja.forEach((item) => {
         const btnAux = crearButton(item.titulo, item.icon);
         btnAux.classList.add('btn-side-bar');
+        if (item.titulo === 'Bandeja') {
+            btnAux.classList.add('btn-side-bar-active');
+        }
+        btnAux.id = 'btn' + item.titulo;
         sideBar.appendChild(btnAux);
     });
 
@@ -51,7 +54,44 @@ function sideBar() {
     button.classList.add('btn-add-project');
     sideBar.appendChild(button);
 
+    setEventosSideBar();
+
 }
+
+function setEventosSideBar() {
+    const btnBandeja = document.getElementById('btnBandeja');
+    const btnHoy = document.getElementById('btnHoy');
+    const btnSemanal = document.getElementById('btnSemanal');
+
+    // Función para eliminar la clase 'btn-side-bar-active' de todos los botones
+    function resetearBotones() {
+        btnBandeja.classList.remove('btn-side-bar-active');
+        btnHoy.classList.remove('btn-side-bar-active');
+        btnSemanal.classList.remove('btn-side-bar-active');
+    }
+
+    btnBandeja.addEventListener('click', () => {
+        limpiarFormulario();
+        mostrarTareas();
+        resetearBotones();
+        btnBandeja.classList.add('btn-side-bar-active');
+    });
+
+    btnHoy.addEventListener('click', () => {
+        limpiarFormulario();
+        mostrarTareas('Hoy');
+        resetearBotones();
+        btnHoy.classList.add('btn-side-bar-active');
+    });
+
+    btnSemanal.addEventListener('click', () => {
+        limpiarFormulario();
+        mostrarTareas('Semanal');
+        resetearBotones();
+        btnSemanal.classList.add('btn-side-bar-active');
+    });
+}
+
 function crearButton(texto, icono) {
     const button = document.createElement('button');
     const iconoSpan = document.createElement('span');
@@ -79,7 +119,7 @@ function setEventosMain() {
     const btnAceptar = document.querySelector('.btn-aceptar');
     const btnCancelar = document.querySelector('.btn-cancelar');
 
-    
+
 
     if (btnMain) {
         btnMain.addEventListener('click', () => {
@@ -102,7 +142,7 @@ function setEventosMain() {
         });
     }
 
-   
+
 
 
 
@@ -212,6 +252,7 @@ function agregarTarea() {
 
     let nombre = inputNombre.value;
     let fecha = inputFecha.value;
+    const fechaHoy = format(new Date(), 'yyyy-MM-dd');
     let prioridad = inputPrioridad.value;
 
     if (listaTotal.getListaTareas().find(task => task.getTitulo() === nombre)) {
@@ -223,14 +264,45 @@ function agregarTarea() {
     //creamos el objeto tarea y agregamos a la lista
     let tarea = new Tarea(nombre, fecha, prioridad);
     listaTotal.setListaTarea(tarea);
+    if (fechaHoy === fecha) {
+        console.log('Agregamos tarea de HOY');
+        listaHoy.setListaTarea(tarea);
+    }
+
     console.log(listaTotal.getListaTareas());
     return true;
 }
 
-function mostrarTareas() {
+function mostrarTareas(tipoLista) {
+    let lista = [];
+    if (tipoLista === undefined) {
+        lista = listaTotal.getListaTareas();
+    } else {
+        if (tipoLista === 'Hoy') {
+            const fechaHoy = format(new Date(), 'yyyy-MM-dd');
 
+            lista = listaTotal.getListaTareas().filter(task => {
+                return task.getFecha() === fechaHoy;
+            });
+        }
+
+        if (tipoLista === 'Semanal') {
+            // Obtener la fecha de inicio de la semana actual (lunes)
+            const fechaInicioSemana = startOfWeek(new Date(), { weekStartsOn: 0 });
+
+            // Obtener la fecha de fin de la semana actual (domingo)
+            const fechaFinSemana = endOfWeek(new Date(), { weekStartsOn: 0 });
+
+            // Filtrar las tareas dentro del rango de la semana actual
+            lista = listaTotal.getListaTareas().filter(task => {
+                const fechaTarea = new Date(task.getFecha());
+                return isWithinInterval(fechaTarea, { start: fechaInicioSemana, end: fechaFinSemana });
+            });
+        }
+
+    }
     limpiarListaTareas();
-    listaTotal.getListaTareas().forEach((task) => {
+    lista.forEach((task) => {
 
         const mainLista = document.getElementById('main-lista-tareas');
         const tareaDiv = document.createElement('div');
@@ -288,19 +360,18 @@ function eliminarTarea(titulo) {
 
 function abrirEdicion(nombre) {
     const form = document.querySelector('.main-form-tarea');
-    
+
 
     editar = true;
     let tarea = listaTotal.getListaTareas().find(item => item.getTitulo() === nombre);
     console.log('tarea : ' + tarea.getTitulo());
 
-    if(form)
-    {
+    if (form) {
         limpiarFormulario();
     }
-        construirFormularioMain();
-        const btnEditar = document.querySelector('.btn-aceptar-editar');
-    
+    construirFormularioMain();
+    const btnEditar = document.querySelector('.btn-aceptar-editar');
+
 
     const inputNombre = document.getElementById('input-nombre');
     const inputFecha = document.getElementById('input-fecha');
@@ -318,9 +389,9 @@ function abrirEdicion(nombre) {
     } else {
         inputFecha.value = tarea.getFecha();
     }
-   const indice = listaTotal.getListaTareas().findIndex(objeto => objeto.getTitulo() === inputNombre.value);
+    const indice = listaTotal.getListaTareas().findIndex(objeto => objeto.getTitulo() === inputNombre.value);
 
-   console.log('indice capturado : '+indice);
+    console.log('indice capturado : ' + indice);
     if (btnEditar) {
         btnEditar.addEventListener('click', () => {
             if (editarTarea(indice)) {
@@ -330,12 +401,11 @@ function abrirEdicion(nombre) {
 
         });
     }
-    
+
 }
 
-function editarTarea(indice)
-{
-console.log('estoy llegando aqui al editar');
+function editarTarea(indice) {
+    console.log('estoy llegando aqui al editar');
     const inputNombre = document.getElementById('input-nombre');
     const inputFecha = document.getElementById('input-fecha');
     const inputPrioridad = document.getElementById('input-prioridad');
@@ -351,12 +421,12 @@ console.log('estoy llegando aqui al editar');
     //verificamos si existe una fecha
     fecha = fecha.trim() === '' ? 'Sin fecha' : fecha;
     //creamos el objeto tarea y agregamos a la lista
-   
+
     let tareaNueva = new Tarea();
     tareaNueva.setTitulo(nombre);
     tareaNueva.setFechaTermino(fecha);
     tareaNueva.setPrioridad(prioridad);
-    listaTotal.editListaTareas(indice,tareaNueva );
+    listaTotal.editListaTareas(indice, tareaNueva);
     editar = false;
     return true;
 }
