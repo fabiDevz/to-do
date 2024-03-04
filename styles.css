@@ -14,13 +14,13 @@
 }
 
 #header {
-    background-color: rgb(110, 166, 93);
+    background-color:#197e90;
     grid-area: header;
 
 }
 
 #side-bar {
-    background-color: rgb(122, 163, 110);
+    background-color: #5fcadd;
     grid-area: side-bar;
     display: flex;
     flex-direction: column;
@@ -42,20 +42,37 @@
     border: none;
     margin-bottom: 10px;
     border-radius: 10px;
-    color: rgb(255, 255, 114);
+    color: white;
+    span{
+        margin-right: 5px;
+    }
+}
+
+.btn-side-bar-active{
+    
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    width: 200px;
+    background-color: #e85039;
+    font-size: 20px;
+    border: none;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    color: white;
     span{
         margin-right: 5px;
     }
 }
 
 .btn-side-bar:hover{
-    background-color: rgb(92, 157, 72);
+    background-color:rgb(232, 80, 57);
     transition: background-color 0.3s ease; 
     cursor: pointer;
 }
 
 #main-content {
-    background-color: rgb(150, 207, 167);
+    background-color: rgb(214, 255, 255);
     grid-area: main;
     display: flex;
     flex-direction: column;
@@ -107,7 +124,7 @@
 .btn-main:hover{
     
     transition: background-color 0.3s ease; 
-    background-color: rgb(100, 137, 111);
+    background-color:rgb(232, 80, 57, .7)
 }
 
 #input-fecha, #input-prioridad{
@@ -170,7 +187,7 @@
 }
 
 .btn-cancelar {
-    background-color: rgb(255, 114, 114);
+    background-color: rgb(251, 142, 142);
 }
 .btn-cancelar:hover{
     transition: background-color 0.3s ease; 
@@ -199,7 +216,7 @@
 }
 
 .tarea-container:hover{
-    background-color: rgb(165, 164, 164);
+    background-color: rgb(248, 108, 0, .5);
     transition: background-color 0.3s ease; 
 }
 
@@ -228,6 +245,34 @@
 
 .btn-eliminar-tarea:hover{
     background-color: rgb(232, 39, 39);
+    transition: background-color 0.3s ease; 
+}
+
+.btn-add-project{
+    margin-top: 5px;
+    
+    width: 200px;
+    height: 30px;
+    align-self: center;
+    border: none;
+    color: black;
+    background-color: transparent;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+
+    span {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 5px;
+    }
+}
+
+.btn-add-project:hover{
+    background-color: rgba(252, 220, 255, 0.747);
     transition: background-color 0.3s ease; 
 }
 
