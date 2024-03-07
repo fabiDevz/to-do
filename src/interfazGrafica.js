@@ -7,6 +7,7 @@ let listaTotal = new ListaTarea();
 let editar = false;
 let aux = new Tarea('Hacer los deberes del hogar', 'Sin Fecha', 'Alta');
 listaTotal.setListaTarea(aux);
+let listaProyectos = [];
 
 
 function header() {
@@ -22,6 +23,7 @@ function header() {
 function sideBar() {
     const sideBarUp = document.createElement('div');
     sideBarUp.classList.add('side-bar-up');
+
     const sideBarDown = document.createElement('div');
     sideBarDown.classList.add('side-bar-down');
 
@@ -56,12 +58,398 @@ function sideBar() {
     const button = crearButton('Agregar proyecto', "<span class='material-symbols-outlined'>add_circle</span>");
     button.classList.add('btn-add-project');
 
+    button.onclick = () => crearFormularioProyecto();
+
 
     sideBarDown.appendChild(button);
     sideBar.appendChild(sideBarDown);
     setEventosSideBar();
 
 }
+
+function crearFormularioProyecto() {
+    limpiarMain();
+    resetearActive();
+    const formulario = document.createElement('div');
+    const labelNombre = document.createElement('label');
+    const inputNombre = document.createElement('input');
+    const labelDescripcion = document.createElement('label');
+    const inputDescripcion = document.createElement('input');
+    const botonesArea = document.createElement('div');
+    const botonAceptar = document.createElement('button');
+    const botonCancelar = document.createElement('button');
+
+    labelNombre.textContent = 'Nombre:';
+    labelDescripcion.textContent = 'Descripción:';
+
+    formulario.classList.add('main-project-form');
+    botonesArea.classList.add('main-project-boton-area');
+
+    inputNombre.setAttribute('type', 'text');
+    inputNombre.setAttribute('placeholder', 'ej. Proyecto Portafolio');
+    inputNombre.setAttribute('required', '');
+
+    inputNombre.id = 'input-nombre-project';
+    inputDescripcion.id = 'input-descripcion-project';
+
+    inputDescripcion.setAttribute('type', 'text');
+    inputDescripcion.setAttribute('placeholder', 'ej. Proyecto para recopilar todos mis programas de forma ordenada ...');
+    inputDescripcion.setAttribute('required', '');
+
+    botonAceptar.textContent = 'Aceptar';
+    botonCancelar.textContent = 'Cancelar';
+
+    botonAceptar.classList.add('btn-aceptar-project');
+    botonCancelar.classList.add('btn-cancelar-project');
+
+    botonAceptar.onclick = () => {
+        if (agregarProyecto()) {
+            mostrarProyectos();
+            mostrarItemProyecto();
+        }
+    };
+    botonCancelar.onclick = () => cancelarProyecto();
+
+    // Agregar elementos al formulario
+    formulario.appendChild(labelNombre);
+    formulario.appendChild(inputNombre);
+    formulario.appendChild(labelDescripcion);
+    formulario.appendChild(inputDescripcion);
+    botonesArea.appendChild(botonAceptar);
+    botonesArea.appendChild(botonCancelar);
+    formulario.appendChild(botonesArea);
+
+    // Agregar el formulario al div con el ID 'main-project'
+    const divMainProject = document.getElementById('main-project');
+    divMainProject.appendChild(formulario);
+}
+
+function cancelarProyecto() {
+    limpiarMain();
+    const btnHoy = document.getElementById('btnBandeja');
+    btnHoy.classList.add('btn-side-bar-active');
+    mostrarTareas();
+}
+
+function mostrarItemProyecto(nombreProyecto) {
+
+    const inputNombre = document.getElementById('input-nombre-project');
+    const inputDescripcion = document.getElementById('input-descripcion-project');
+
+    const mainProject = document.getElementById('main-project');
+
+    let nombre = '';
+    let descripcion = '';
+    if (nombreProyecto === undefined) {
+        nombre = inputNombre.value;
+        descripcion = inputDescripcion.value;
+    } else {
+        let proyecto = listaProyectos.find(project => {
+            return project.getNombreProyecto() === nombreProyecto
+        });
+        nombre = proyecto.getNombreProyecto();
+        descripcion = proyecto.getDescripcionProyecto();
+    }
+    limpiarMain();
+    resetearActive();
+
+
+
+
+    // Crear contenedor div
+    const divProyecto = document.createElement('div');
+    divProyecto.classList.add('main-project-item');
+
+    // Crear elementos h2 y p
+    const titulo = document.createElement('h2');
+    const parrafo = document.createElement('p');
+
+    // Configurar contenido
+    titulo.textContent = nombre;
+    parrafo.textContent = descripcion;
+
+    // Agregar elementos al contenedor
+    divProyecto.appendChild(titulo);
+    divProyecto.appendChild(parrafo);
+
+    // Agregar contenedor al elemento main-project
+    mainProject.appendChild(divProyecto);
+
+    /*agregar los elementos tareas a visualizar*/
+    let proyecto = listaProyectos.find(project => {
+        return project.getNombreProyecto() === nombreProyecto
+    });
+
+    if (proyecto) {
+        proyecto.getListaTareas().forEach(task => {
+            const div = document.createElement('div');
+            const spanNombre = document.createElement('span');
+            const spanFecha = document.createElement('span');
+            const spanPrioridad = document.createElement('span');
+            const spanAcciones = document.createElement('span');
+            const botonDelete = crearButton('', "<span class='material-symbols-outlined'>close</span>")
+
+            div.classList.add('main-project-task-item');
+
+            spanNombre.textContent = task.getTitulo();
+            spanFecha.textContent = task.getFecha();
+            if (spanFecha.textContent.trim() === '') {
+                spanFecha.textContent = 'Sin Fecha';
+            }
+            spanPrioridad.textContent = task.getPrioridad();
+
+            div.appendChild(spanNombre);
+            div.appendChild(spanFecha);
+            div.appendChild(spanPrioridad);
+            spanAcciones.appendChild(botonDelete);
+            div.appendChild(spanAcciones);
+
+            mainProject.appendChild(div);
+
+        });
+    }
+
+    const botonAgregarTarea = crearButton('Agregar tarea', "<span class='material-symbols-outlined'>add_circle</span>");
+    botonAgregarTarea.classList.add('btn-add-task-project');
+    const botonArea = document.createElement('div');
+    botonArea.classList.add('main-project-btn-area');
+
+
+    botonAgregarTarea.onclick = () => formularioTareaItemProyecto(nombre);
+    botonArea.appendChild(botonAgregarTarea);
+    mainProject.appendChild(botonArea);
+}
+
+function formularioTareaItemProyecto(nombreProyecto) {
+    limpiarMain();
+    const mainProject = document.getElementById('main-project');
+
+    // Crear formulario
+    const divFormProject = document.createElement('div');
+    divFormProject.classList.add('main-project-form-tarea');
+
+    // Crear label e input para el nombre de la tarea
+    const labelNombre = document.createElement('label');
+    labelNombre.textContent = "Nombre de tarea ";
+    const inputNombre = document.createElement('input');
+    inputNombre.type = 'text';
+    inputNombre.id = 'input-nombre-project';
+
+    // Crear label e input para la fecha de la tarea
+    const labelFecha = document.createElement('label');
+    labelFecha.textContent = "Fecha de la tarea:";
+    const inputFecha = document.createElement('input');
+    inputFecha.type = 'date';
+    inputFecha.id = 'input-fecha-project';
+
+    const formattedDate = format(new Date(), 'yyyy-MM-dd');
+
+    inputFecha.value = formattedDate;
+
+    // Crear label e input para la prioridad de la tarea
+    const labelPrioridad = document.createElement('label');
+    const inputPrioridad = document.createElement('select');
+    labelPrioridad.textContent = 'Nivel de prioridad';
+    inputPrioridad.id = 'input-prioridad-project';
+
+    const opcionAlta = document.createElement('option');
+    opcionAlta.value = 'Alta';
+    opcionAlta.textContent = 'Alta';
+
+    const opcionMedia = document.createElement('option');
+    opcionMedia.value = 'Media';
+    opcionMedia.textContent = 'Media';
+
+    const opcionBaja = document.createElement('option');
+    opcionBaja.value = 'Baja';
+    opcionBaja.textContent = 'Baja';
+
+    inputPrioridad.appendChild(opcionAlta);
+    inputPrioridad.appendChild(opcionMedia);
+    inputPrioridad.appendChild(opcionBaja);
+
+    //opcion por defecto
+    opcionBaja.selected = true;
+
+
+    // Crear botón "Agregar al proyecto"
+    const botonAgregar = document.createElement('button');
+    const divBtns = document.createElement('div');
+    divBtns.classList.add('main-project-form-area-btn');
+    botonAgregar.textContent = "Agregar al proyecto";
+    botonAgregar.classList.add('btn-agregar-tarea-proyecto');
+
+    botonAgregar.onclick = () => {
+        
+        if (agregarTareaProyecto(nombreProyecto)) {
+            limpiarMain();
+            mostrarItemProyecto(nombreProyecto);
+        }
+    };
+
+    // Crear botón "Cancelar"
+    const botonCancelar = document.createElement('button');
+    botonCancelar.type = 'button';
+    botonCancelar.textContent = "Cancelar";
+    botonCancelar.classList.add('btn-cancelar-tarea-proyecto');
+
+    botonCancelar.onclick = () => {
+        limpiarMain();
+        const btnHoy = document.getElementById('btnBandeja');
+        btnHoy.classList.add('btn-side-bar-active');
+        mostrarTareas();
+    }
+
+    // Agregar elementos al formulario
+    divFormProject.appendChild(labelNombre);
+    divFormProject.appendChild(inputNombre);
+    divFormProject.appendChild(labelFecha);
+    divFormProject.appendChild(inputFecha);
+    divFormProject.appendChild(labelPrioridad);
+    divFormProject.appendChild(inputPrioridad);
+    divBtns.appendChild(botonAgregar);
+    divBtns.appendChild(botonCancelar);
+    divFormProject.appendChild(divBtns);
+
+    // Agregar formulario al elemento main-project
+    mainProject.appendChild(divFormProject);
+}
+
+function agregarTareaProyecto(nombreProyecto) {
+    const inputNombre = document.getElementById('input-nombre-project');
+    const inputFecha = document.getElementById('input-fecha-project');
+    const inputPrioridad = document.getElementById('input-prioridad-project');
+
+    if(inputNombre.value.trim() === '')
+    {
+        alert('Debe poner un nombre a la tarea');
+        return false;
+    }
+
+
+    let proyecto = listaProyectos.find(project => {
+        return project.getNombreProyecto() === nombreProyecto
+    });
+
+    if (proyecto) {
+        //agregar desde el objeto
+        if(inputFecha.value.trim() === '')
+        {
+            inputFecha.value = 'Sin Fecha';
+        }
+        let tarea = new Tarea(inputNombre.value, inputFecha.value, inputPrioridad.value)
+        proyecto.agregarTarea(tarea);
+        return true
+    }
+    return false;
+}
+
+
+function mostrarProyectos() {
+    //agregamos al DOM
+    limpiarProyectos();
+
+    const sideBarDown = document.querySelector('.side-bar-down');
+
+    listaProyectos.forEach((project) => {
+
+        const botonProyecto = crearButton(project.getNombreProyecto(), "<span class='material-symbols-outlined'>folder</span>");
+        botonProyecto.classList.add('btn-item-project');
+        botonProyecto.id = listaProyectos.indexOf(project) + 1;
+        botonProyecto.onclick = () => mostrarItemProyecto(project.getNombreProyecto());
+        sideBarDown.appendChild(botonProyecto);
+    });
+
+    const botonNuevo = crearButton('Agregar proyecto', "<span class='material-symbols-outlined'>add_circle</span>");
+    botonNuevo.classList.add('btn-add-project');
+
+    botonNuevo.onclick = () => crearFormularioProyecto();
+
+    sideBarDown.appendChild(botonNuevo);
+
+}
+
+function limpiarProyectos() {
+    const sideBarDown = document.querySelector('.side-bar-down');
+
+    while (sideBarDown.firstChild) {
+
+        sideBarDown.removeChild(sideBarDown.firstChild);
+
+    }
+
+    const titulo = document.createElement('h2');
+    titulo.textContent = 'Proyectos';
+
+    sideBarDown.appendChild(titulo);
+}
+
+function agregarProyecto() {
+    const inputNombre = document.getElementById('input-nombre-project');
+    const inputDescripcion = document.getElementById('input-descripcion-project');
+
+    let nombre = inputNombre.value;
+    let descripcion = inputDescripcion.value;
+
+    if (nombre.trim() === '' || descripcion.trim() === '') {
+        alert('Debe rellenar todos los campos.');
+        return false;
+    }
+
+    let proyectoDuplicado = listaProyectos.find(project => {
+        return project.getNombreProyecto() === nombre
+    });
+
+    if (proyectoDuplicado === undefined) {
+        console.log('Se agrego un nuevo proyecto');
+
+        let proyecto = new Proyecto();
+        proyecto.setNombreProyecto(nombre);
+        proyecto.setDescripcionProyecto(descripcion);
+        listaProyectos.push(proyecto);
+        console.log(listaProyectos);
+
+        return true;
+    } else {
+        alert('Ya existe un proyecto con ese nombre.');
+        return false;
+    }
+}
+
+
+// Función para eliminar la clase 'btn-side-bar-active' de todos los botones
+function resetearActive() {
+    const btnBandeja = document.getElementById('btnBandeja');
+    const btnHoy = document.getElementById('btnHoy');
+    const btnSemanal = document.getElementById('btnSemanal');
+
+    btnBandeja.classList.remove('btn-side-bar-active');
+    btnHoy.classList.remove('btn-side-bar-active');
+    btnSemanal.classList.remove('btn-side-bar-active');
+
+
+}
+
+function limpiarMain() {
+    const elementos = ['main-lista-tareas', 'main-form-area', 'main-btn-area', 'main-project'];
+
+    for (const elementoId of elementos) {
+        const elemento = document.getElementById(elementoId);
+        while (elemento.firstChild) {
+            elemento.removeChild(elemento.firstChild);
+        }
+    }
+}
+
+function limpiarMainProject() {
+    const main = document.getElementById('main-project');
+
+    while (main.firstChild) {
+        main.removeChild(main.firstChild);
+    }
+}
+
+
 
 function setEventosSideBar() {
     const btnBandeja = document.getElementById('btnBandeja');
@@ -76,6 +464,8 @@ function setEventosSideBar() {
     }
 
     btnBandeja.addEventListener('click', () => {
+        limpiarMainProject();
+
         limpiarFormulario();
         mostrarTareas();
         resetearBotones();
@@ -83,6 +473,8 @@ function setEventosSideBar() {
     });
 
     btnHoy.addEventListener('click', () => {
+        limpiarMainProject();
+
         limpiarFormulario();
         mostrarTareas('Hoy');
         resetearBotones();
@@ -90,6 +482,8 @@ function setEventosSideBar() {
     });
 
     btnSemanal.addEventListener('click', () => {
+        limpiarMainProject();
+
         limpiarFormulario();
         mostrarTareas('Semanal');
         resetearBotones();
@@ -125,8 +519,11 @@ function setEventosMain() {
     const btnAceptar = document.querySelector('.btn-aceptar');
     const btnCancelar = document.querySelector('.btn-cancelar');
     const elementoActivo = document.querySelector('.btn-side-bar-active');
-    let textoElementoActivo = elementoActivo.textContent;
+    let textoElementoActivo = '';
+    if (elementoActivo) {
+        textoElementoActivo = elementoActivo.textContent;
 
+    }
 
 
     if (btnMain) {
@@ -333,8 +730,7 @@ function mostrarTareas(tipoLista) {
     }
     limpiarListaTareas();
     const mainLista = document.getElementById('main-lista-tareas');
-    if(lista.length === 0)
-    {
+    if (lista.length === 0) {
         const divTitulos = document.createElement('div');
         divTitulos.classList.add('main-titulo-no-task');
         const noHayTareas = document.createElement('h2');
@@ -342,7 +738,7 @@ function mostrarTareas(tipoLista) {
 
         divTitulos.appendChild(noHayTareas)
         mainLista.appendChild(divTitulos);
-    }else{
+    } else {
         const divTitulos = document.createElement('div');
         divTitulos.classList.add('main-titulos-tareas');
 
@@ -365,7 +761,7 @@ function mostrarTareas(tipoLista) {
     }
     lista.forEach((task) => {
 
-        
+
         const tareaDiv = document.createElement('div');
         const tareaText = document.createElement('span');
         const tareaDate = document.createElement('span');

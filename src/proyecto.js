@@ -28,10 +28,10 @@ export default class Proyecto{
     }
 
     getListaTareas() {
-        return this._listaTareas;
+        return this._lista;
     }
     
     agregarTarea(tarea) {
-        this._listaTareas.push(tarea);
+        this._lista.push(tarea);
     }
 }
