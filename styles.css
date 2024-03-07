@@ -14,25 +14,42 @@
 }
 
 #header {
-    background-color:#197e90;
+    background-color: #197e90;
     grid-area: header;
 
 }
 
 #side-bar {
     background-color: #5fcadd;
+   
+}
+
+.side-bar-up{
+    background-color: #5fcadd;
     grid-area: side-bar;
     display: flex;
     flex-direction: column;
     padding: 40px;
 
-    h2{
+    h2 {
         margin-bottom: 10px;
     }
 }
 
-.btn-side-bar{
-    
+.side-bar-down{
+    background-color: #5fcadd;
+    grid-area: side-bar;
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+
+    h2 {
+        margin-bottom: 10px;
+    }
+}
+
+.btn-side-bar {
+
     display: flex;
     justify-content: left;
     align-items: center;
@@ -43,13 +60,17 @@
     margin-bottom: 10px;
     border-radius: 10px;
     color: white;
-    span{
+
+    span {
         margin-right: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 }
 
-.btn-side-bar-active{
-    
+.btn-side-bar-active {
+
     display: flex;
     justify-content: left;
     align-items: center;
@@ -60,14 +81,15 @@
     margin-bottom: 10px;
     border-radius: 10px;
     color: white;
-    span{
+
+    span {
         margin-right: 5px;
     }
 }
 
-.btn-side-bar:hover{
-    background-color:rgb(232, 80, 57);
-    transition: background-color 0.3s ease; 
+.btn-side-bar:hover {
+    background-color: rgb(232, 80, 57);
+    transition: background-color 0.3s ease;
     cursor: pointer;
 }
 
@@ -121,16 +143,19 @@
     }
 }
 
-.btn-main:hover{
-    
-    transition: background-color 0.3s ease; 
-    background-color:rgb(232, 80, 57, .7)
+.btn-main:hover {
+
+    transition: background-color 0.3s ease;
+    background-color: rgb(232, 80, 57, .7)
 }
 
-#input-fecha, #input-prioridad{
+#input-fecha,
+#input-prioridad {
     text-align: center;
 }
-#input-fecha:hover, #input-prioridad:hover{
+
+#input-fecha:hover,
+#input-prioridad:hover {
     cursor: pointer;
 }
 
@@ -167,34 +192,37 @@
     }
 }
 
-#main-btn-area{
+#main-btn-area {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.btn-aceptar, .btn-aceptar-editar {
+.btn-aceptar,
+.btn-aceptar-editar {
     background-color: rgb(163, 255, 163);
 }
 
-.btn-aceptar:hover{
-    transition: background-color 0.3s ease; 
+.btn-aceptar:hover {
+    transition: background-color 0.3s ease;
     background-color: rgb(69, 245, 69);
 }
-.btn-aceptar-editar:hover{
-    transition: background-color 0.3s ease; 
+
+.btn-aceptar-editar:hover {
+    transition: background-color 0.3s ease;
     background-color: rgb(69, 245, 69);
 }
 
 .btn-cancelar {
     background-color: rgb(251, 142, 142);
 }
-.btn-cancelar:hover{
-    transition: background-color 0.3s ease; 
+
+.btn-cancelar:hover {
+    transition: background-color 0.3s ease;
     background-color: rgb(255, 59, 59);
 }
 
-.tarea-container{
+.tarea-container {
     width: 80vw;
     margin-left: 20px;
     margin-right: 20px;
@@ -205,22 +233,23 @@
     height: 30px;
     background-color: transparent;
     display: grid;
-    grid-template-columns: 8fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 7fr 2fr 1fr .5fr .5fr;
     justify-content: center;
     align-items: center;
-    span{
+
+    span {
         display: flex;
         justify-content: left;
         align-items: center;
     }
 }
 
-.tarea-container:hover{
+.tarea-container:hover {
     background-color: rgb(248, 108, 0, .5);
-    transition: background-color 0.3s ease; 
+    transition: background-color 0.3s ease;
 }
 
-.btn-editar-tarea{
+.btn-editar-tarea {
     border: none;
     background-color: transparent;
     display: flex;
@@ -229,13 +258,13 @@
     border-radius: 10px;
 }
 
-.btn-editar-tarea:hover{
+.btn-editar-tarea:hover {
     background-color: rgb(98, 243, 122);
-    transition: background-color 0.3s ease; 
+    transition: background-color 0.3s ease;
 }
 
-.btn-eliminar-tarea{
-    border:none;
+.btn-eliminar-tarea {
+    border: none;
     background-color: transparent;
     display: flex;
     justify-content: center;
@@ -243,14 +272,14 @@
     border-radius: 10px;
 }
 
-.btn-eliminar-tarea:hover{
+.btn-eliminar-tarea:hover {
     background-color: rgb(232, 39, 39);
-    transition: background-color 0.3s ease; 
+    transition: background-color 0.3s ease;
 }
 
-.btn-add-project{
+.btn-add-project {
     margin-top: 5px;
-    
+
     width: 200px;
     height: 30px;
     align-self: center;
@@ -271,8 +300,121 @@
     }
 }
 
-.btn-add-project:hover{
+.btn-add-project:hover {
     background-color: rgba(252, 220, 255, 0.747);
-    transition: background-color 0.3s ease; 
+    transition: background-color 0.3s ease;
 }
 
+.main-project {
+    display: flex;
+    flex-direction: column;
+    margin-left: 100px;
+    margin-right: 100px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    input {
+        width: 40vw;
+        border-radius: 5px;
+        border: none;
+    }
+
+    label {
+        width: 40vw;
+        align-items: left;
+    }
+
+    textarea {
+        border: none;
+    }
+
+}
+
+.text-area-project {
+    width: 40vw;
+}
+
+.main-project-btnArea {
+    width: 40vw;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+}
+
+.btn-aceptar-project {
+    border-radius: 5px;
+    border: none;
+    background-color: rgb(163, 255, 163);
+}
+
+.btn-aceptar-project:hover{
+    transition: 1s;
+    cursor:pointer;
+    background-color: rgb(41, 147, 41);
+}
+
+.btn-cancelar-project {
+    border-radius: 5px;
+    border: none;
+    background-color: rgb(254, 82, 82)
+}
+
+.btn-cancelar-project:hover{
+    border-radius: 5px;
+    border:none;
+    cursor:pointer;
+    background-color: rgb(174, 39, 39);
+}
+
+.btn-item-project{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    width: 200px;
+    background-color: transparent;
+    font-size: 20px;
+    border: none;
+    margin-bottom: 10px;
+    border-radius: 10px;
+  
+
+    span {
+        margin-right: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+}
+
+.btn-item-project:hover{
+    color: white;
+    cursor: pointer;
+}
+
+.main-titulos-tareas{
+   font-weight: bold;
+    display: grid;
+    width: 80vw;
+    margin-left: 40px;
+    margin-right: 40px;
+    justify-content: center;
+    align-items: center;
+    grid-template-columns: 4fr 2fr 1fr 1fr ;
+   span{
+    
+    border-radius: 20px;
+    padding-left: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   }
+}
+
+.main-titulo-no-task
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
