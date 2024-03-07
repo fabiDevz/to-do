@@ -1,7 +1,8 @@
 export default class Proyecto{
-    constructor(nombre,tareas = [])
+    constructor(nombre,descripcion,tareas = [])
     {
         this._nombre = nombre;
+        this._descripcion = descripcion;
         this._lista = tareas;
     }
 
@@ -11,18 +12,26 @@ export default class Proyecto{
         return this._nombre;
     }
 
+    getDescripcionProyecto()
+    {
+        return this._descripcion;
+    }
+
+    setDescripcionProyecto(descripcion)
+    {
+        this._descripcion = descripcion;
+    }
+
     setNombreProyecto(nombre)
     {   
         this._nombre = nombre;
     }
 
-    getListaProyecto()
-    {
-        return this._lista;
+    getListaTareas() {
+        return this._listaTareas;
     }
     
-    setTaskListaProyecto(task)
-    {
-        this._lista.push(task);
+    agregarTarea(tarea) {
+        this._listaTareas.push(tarea);
     }
 }

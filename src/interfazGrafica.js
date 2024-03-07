@@ -1,16 +1,13 @@
 import ListaTarea from "./listaTarea";
 import Tarea from "./tarea";
-import { format, startOfWeek, endOfWeek, isWithinInterval} from 'date-fns';
+import Proyecto from "./proyecto";
+import { format, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';
 
-let listaTotal = new ListaTarea('Todo');
+let listaTotal = new ListaTarea();
 let editar = false;
-
 let aux = new Tarea('Hacer los deberes del hogar', 'Sin Fecha', 'Alta');
 listaTotal.setListaTarea(aux);
 
-let listaHoy = new ListaTarea('Hoy');
-let listaSemanal = new ListaTarea('Semanal');
-let listaPrioridad = new ListaTarea('Prioritario');
 
 function header() {
     const header = document.getElementById('header');
@@ -23,6 +20,11 @@ function header() {
 
 }
 function sideBar() {
+    const sideBarUp = document.createElement('div');
+    sideBarUp.classList.add('side-bar-up');
+    const sideBarDown = document.createElement('div');
+    sideBarDown.classList.add('side-bar-down');
+
     const sideBar = document.getElementById('side-bar');
     // creacion de elementos 
     const bandejaSideBar = document.createElement('h2');
@@ -37,7 +39,7 @@ function sideBar() {
     bandejaSideBar.textContent = 'Principal';
     proyectoSideBar.textContent = 'Proyectos';
 
-    sideBar.appendChild(bandejaSideBar);
+    sideBarUp.appendChild(bandejaSideBar);
     //ciclo para construir botones del sidebar
     elementosBandeja.forEach((item) => {
         const btnAux = crearButton(item.titulo, item.icon);
@@ -46,14 +48,17 @@ function sideBar() {
             btnAux.classList.add('btn-side-bar-active');
         }
         btnAux.id = 'btn' + item.titulo;
-        sideBar.appendChild(btnAux);
+        sideBarUp.appendChild(btnAux);
     });
+    sideBar.appendChild(sideBarUp);
 
-    sideBar.appendChild(proyectoSideBar);
+    sideBarDown.appendChild(proyectoSideBar);
     const button = crearButton('Agregar proyecto', "<span class='material-symbols-outlined'>add_circle</span>");
     button.classList.add('btn-add-project');
-    sideBar.appendChild(button);
 
+
+    sideBarDown.appendChild(button);
+    sideBar.appendChild(sideBarDown);
     setEventosSideBar();
 
 }
@@ -107,10 +112,11 @@ function crearButton(texto, icono) {
 function main() {
 
     mostrarTareas();
-    btnAgregarTarea();
     setEventosMain();
 
 }
+
+
 
 
 
@@ -118,18 +124,33 @@ function setEventosMain() {
     const btnMain = document.querySelector('.btn-main');
     const btnAceptar = document.querySelector('.btn-aceptar');
     const btnCancelar = document.querySelector('.btn-cancelar');
+    const elementoActivo = document.querySelector('.btn-side-bar-active');
+    let textoElementoActivo = elementoActivo.textContent;
 
 
 
     if (btnMain) {
         btnMain.addEventListener('click', () => {
-            construirFormularioMain();
+            construirFormularioAgregarTarea();
         });
     }
     if (btnAceptar) {
         btnAceptar.addEventListener('click', () => {
             if (agregarTarea()) {
-                mostrarTareas();
+                console.log('elemento activo : ' + textoElementoActivo);
+                if (textoElementoActivo.includes('Hoy')) {
+                    console.log('entre a hoy ');
+                    mostrarTareas('Hoy');
+                } else {
+                    if (textoElementoActivo.includes('Semanal')) {
+                        console.log('entre a semanal ');
+                        mostrarTareas('Semanal');
+                    } else {
+                        console.log('entre a la normie ');
+                        mostrarTareas();
+                    }
+                }
+
                 limpiarFormulario();
             }
 
@@ -150,16 +171,21 @@ function setEventosMain() {
 
 
 function btnAgregarTarea() {
+
+
     const mainBtnArea = document.getElementById('main-btn-area');
     const btnMain = crearButton('Agregar tarea', "<span class='material-symbols-outlined'>add_circle</span>");
     btnMain.classList.add('btn-main');
 
     mainBtnArea.appendChild(btnMain);
+
+
 }
 
-function construirFormularioMain() {
-    const mainFormArea = document.getElementById('main-form-area');
-    if (mainFormArea.childElementCount === 0) {
+function construirFormularioAgregarTarea() {
+
+    const mainForm = document.getElementById('main-form-area');
+    if (mainForm.childElementCount === 0) {
         //elementos div del formulario
         const formularioTarea = document.createElement('div');
         const formBtnArea = document.createElement('div');
@@ -221,6 +247,8 @@ function construirFormularioMain() {
         formBtnArea.classList.add('main-form-btnArea');
         formInputArea.classList.add('main-form-InputArea');
 
+
+
         //Juntamos todo
         formBtnArea.appendChild(btnAceptar);
         formBtnArea.appendChild(btnCancelar);
@@ -239,11 +267,12 @@ function construirFormularioMain() {
         formularioTarea.appendChild(formInputArea);
         formularioTarea.appendChild(formBtnArea);
 
-        mainFormArea.appendChild(formularioTarea);
-
+        mainForm.appendChild(formularioTarea);
         setEventosMain();
     }
 }
+
+
 
 function agregarTarea() {
     const inputNombre = document.getElementById('input-nombre');
@@ -264,16 +293,17 @@ function agregarTarea() {
     //creamos el objeto tarea y agregamos a la lista
     let tarea = new Tarea(nombre, fecha, prioridad);
     listaTotal.setListaTarea(tarea);
-    if (fechaHoy === fecha) {
-        console.log('Agregamos tarea de HOY');
-        listaHoy.setListaTarea(tarea);
-    }
-
     console.log(listaTotal.getListaTareas());
     return true;
 }
 
 function mostrarTareas(tipoLista) {
+
+    const button = document.querySelector('.btn-main');
+    if (button === null) {
+        btnAgregarTarea();
+        setEventosMain();
+    }
     let lista = [];
     if (tipoLista === undefined) {
         lista = listaTotal.getListaTareas();
@@ -302,9 +332,40 @@ function mostrarTareas(tipoLista) {
 
     }
     limpiarListaTareas();
+    const mainLista = document.getElementById('main-lista-tareas');
+    if(lista.length === 0)
+    {
+        const divTitulos = document.createElement('div');
+        divTitulos.classList.add('main-titulo-no-task');
+        const noHayTareas = document.createElement('h2');
+        noHayTareas.textContent = 'No quedan tareas por hacer aqui ...';
+
+        divTitulos.appendChild(noHayTareas)
+        mainLista.appendChild(divTitulos);
+    }else{
+        const divTitulos = document.createElement('div');
+        divTitulos.classList.add('main-titulos-tareas');
+
+        const spanNombre = document.createElement('span');
+        const spanFecha = document.createElement('span');
+        const spanPrioridad = document.createElement('span');
+        const spanAcciones = document.createElement('span');
+
+        spanNombre.textContent = 'Tarea';
+        spanFecha.textContent = 'Fecha';
+        spanPrioridad.textContent = 'Prioridad';
+        spanAcciones.textContent = 'Acciones';
+
+        divTitulos.appendChild(spanNombre);
+        divTitulos.appendChild(spanFecha);
+        divTitulos.appendChild(spanPrioridad);
+        divTitulos.appendChild(spanAcciones);
+        mainLista.appendChild(divTitulos);
+
+    }
     lista.forEach((task) => {
 
-        const mainLista = document.getElementById('main-lista-tareas');
+        
         const tareaDiv = document.createElement('div');
         const tareaText = document.createElement('span');
         const tareaDate = document.createElement('span');
@@ -333,7 +394,6 @@ function mostrarTareas(tipoLista) {
         mainLista.appendChild(tareaDiv);
     });
 
-    // btnTarea();
 }
 
 function limpiarListaTareas() {
@@ -369,7 +429,7 @@ function abrirEdicion(nombre) {
     if (form) {
         limpiarFormulario();
     }
-    construirFormularioMain();
+    construirFormularioAgregarTarea();
     const btnEditar = document.querySelector('.btn-aceptar-editar');
 
 
