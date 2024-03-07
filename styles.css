@@ -197,6 +197,11 @@
     justify-content: center;
     align-items: center;
 }
+.main-project-btn-area{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .btn-aceptar,
 .btn-aceptar-editar {
@@ -417,4 +422,190 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+
+.main-project-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.main-project-form label {
+    font-weight: bold;
+}
+
+.main-project-form input[type="text"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+}
+
+.btn-aceptar-project {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    background-color: #28a745; /* Verde */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-cancelar-project {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    background-color: #dc3545; /* Rojo */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-aceptar-project:hover {
+    background-color: #218838; /* Verde más oscuro */
+}
+
+.btn-cancelar-project:hover {
+    background-color: #c82333; /* Rojo más oscuro */
+}
+
+.main-project-boton-area
+{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+
+.main-project-item {
+    border: none;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    width: 80vw;
+
+    
+}
+
+.main-project-item h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    
+}
+
+.main-project-item p {
+    width: 600px;
+    font-size: 18px;
+    color: #666;
+    word-wrap: break-word; /* Para compatibilidad con navegadores antiguos */
+    overflow-wrap: break-word; 
+}
+
+
+.btn-add-task-project {
+    margin-top: 5px;
+    width: 300px;
+    height: 30px;
+    align-self: center;
+    border: none;
+    color: black;
+    background-color: transparent;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+
+    span {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 5px;
+    }
+}
+
+.btn-add-task-project:hover {
+    background-color: #81b084; 
+}
+
+.main-project-form-tarea {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.main-project-form-tarea label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.main-project-form-tarea input[type="text"],
+.main-project-form-tarea input[type="date"],
+.main-project-form-tarea select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* Para incluir el padding en el ancho */
+}
+
+.main-project-form-tarea button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-agregar-tarea-proyecto {
+    background-color: #4CAF50;
+    color: white;
+   
+}
+
+.btn-agregar-tarea-proyecto:hover {
+    background-color: #45a049;
+}
+
+.btn-cancelar-tarea-proyecto {
+    background-color: #f44336;
+    color: white;
+   
+}
+
+.btn-cancelar-tarea-proyecto:hover {
+    background-color: #da190b;
+}
+
+.main-project-form-area-btn{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.main-project-task-item{
+    width: 80vw;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    padding-left: 20px;
+    height: 30px;
+    background-color: transparent;
+    display: grid;
+    grid-template-columns: 7fr 2fr 1fr .5fr .5fr;
+    justify-content: center;
+    align-items: center;
+
+    span {
+        display: flex;
+        justify-content: left;
+        align-items: center;
+    }
+}
+
+.main-project-task-item:hover{
+    background-color: #ed9386;
 }
