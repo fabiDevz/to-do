@@ -30,6 +30,10 @@ export default class Proyecto{
     getListaTareas() {
         return this._lista;
     }
+
+    setListaTareas(lista){
+        this._lista = lista;
+    }
     
     agregarTarea(tarea) {
         this._lista.push(tarea);

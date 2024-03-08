@@ -168,9 +168,28 @@ function mostrarItemProyecto(nombreProyecto) {
     titulo.textContent = nombre;
     parrafo.textContent = descripcion;
 
+
+    const divTitulos = document.createElement('div');
+    divTitulos.classList.add('main-titulos-tareas-project');
+
+    const spanNombre = document.createElement('span');
+    const spanFecha = document.createElement('span');
+    const spanPrioridad = document.createElement('span');
+    const spanAcciones = document.createElement('span');
+
+    spanNombre.textContent = 'Tarea';
+    spanFecha.textContent = 'Fecha';
+    spanPrioridad.textContent = 'Prioridad';
+    spanAcciones.textContent = 'Acciones';
+
+    divTitulos.appendChild(spanNombre);
+    divTitulos.appendChild(spanFecha);
+    divTitulos.appendChild(spanPrioridad);
+    divTitulos.appendChild(spanAcciones);
     // Agregar elementos al contenedor
     divProyecto.appendChild(titulo);
     divProyecto.appendChild(parrafo);
+    divProyecto.appendChild(divTitulos);
 
     // Agregar contenedor al elemento main-project
     mainProject.appendChild(divProyecto);
@@ -179,7 +198,7 @@ function mostrarItemProyecto(nombreProyecto) {
     let proyecto = listaProyectos.find(project => {
         return project.getNombreProyecto() === nombreProyecto
     });
-
+   
     if (proyecto) {
         proyecto.getListaTareas().forEach(task => {
             const div = document.createElement('div');
@@ -187,7 +206,9 @@ function mostrarItemProyecto(nombreProyecto) {
             const spanFecha = document.createElement('span');
             const spanPrioridad = document.createElement('span');
             const spanAcciones = document.createElement('span');
-            const botonDelete = crearButton('', "<span class='material-symbols-outlined'>close</span>")
+            const botonDelete = crearButton('', "<span class='material-symbols-outlined'>close</span>");
+
+            botonDelete.id = 'btn-delete-task-project';
 
             div.classList.add('main-project-task-item');
 
@@ -201,6 +222,8 @@ function mostrarItemProyecto(nombreProyecto) {
             div.appendChild(spanNombre);
             div.appendChild(spanFecha);
             div.appendChild(spanPrioridad);
+
+            botonDelete.onclick = () => eliminarTareaDelProyecto(proyecto.getNombreProyecto(), task.getTitulo());
             spanAcciones.appendChild(botonDelete);
             div.appendChild(spanAcciones);
 
@@ -218,6 +241,17 @@ function mostrarItemProyecto(nombreProyecto) {
     botonAgregarTarea.onclick = () => formularioTareaItemProyecto(nombre);
     botonArea.appendChild(botonAgregarTarea);
     mainProject.appendChild(botonArea);
+}
+
+function eliminarTareaDelProyecto(nombreProyecto, nombreTarea) {
+    let proyecto = listaProyectos.find(project => {
+        return nombreProyecto === project.getNombreProyecto()
+    });
+
+    proyecto.setListaTareas(proyecto.getListaTareas().filter(task => task.getTitulo() !== nombreTarea));
+
+    mostrarItemProyecto(nombreProyecto);
+
 }
 
 function formularioTareaItemProyecto(nombreProyecto) {
@@ -280,8 +314,9 @@ function formularioTareaItemProyecto(nombreProyecto) {
     botonAgregar.classList.add('btn-agregar-tarea-proyecto');
 
     botonAgregar.onclick = () => {
-        
+
         if (agregarTareaProyecto(nombreProyecto)) {
+           
             limpiarMain();
             mostrarItemProyecto(nombreProyecto);
         }
@@ -295,9 +330,7 @@ function formularioTareaItemProyecto(nombreProyecto) {
 
     botonCancelar.onclick = () => {
         limpiarMain();
-        const btnHoy = document.getElementById('btnBandeja');
-        btnHoy.classList.add('btn-side-bar-active');
-        mostrarTareas();
+        mostrarItemProyecto(nombreProyecto);
     }
 
     // Agregar elementos al formulario
@@ -320,24 +353,34 @@ function agregarTareaProyecto(nombreProyecto) {
     const inputFecha = document.getElementById('input-fecha-project');
     const inputPrioridad = document.getElementById('input-prioridad-project');
 
-    if(inputNombre.value.trim() === '')
-    {
+    if (inputNombre.value.trim() === '') {
         alert('Debe poner un nombre a la tarea');
         return false;
     }
+
+
 
 
     let proyecto = listaProyectos.find(project => {
         return project.getNombreProyecto() === nombreProyecto
     });
 
+
     if (proyecto) {
         //agregar desde el objeto
-        if(inputFecha.value.trim() === '')
-        {
+        if (inputFecha.value.trim() === '') {
             inputFecha.value = 'Sin Fecha';
         }
-        let tarea = new Tarea(inputNombre.value, inputFecha.value, inputPrioridad.value)
+        let tarea = new Tarea(inputNombre.value, inputFecha.value, inputPrioridad.value);
+
+        let tareaDuplicada = proyecto.getListaTareas().find(task => {
+            return task.getTitulo() === tarea.getTitulo()
+        })
+        if (tareaDuplicada) {
+            alert('Ya existe esa tarea en el proyecto');
+            return false;
+        }
+
         proyecto.agregarTarea(tarea);
         return true
     }
@@ -352,12 +395,21 @@ function mostrarProyectos() {
     const sideBarDown = document.querySelector('.side-bar-down');
 
     listaProyectos.forEach((project) => {
-
+        const divButtonProject = document.createElement('div');
+        divButtonProject.classList.add('side-bar-down-div-project');
         const botonProyecto = crearButton(project.getNombreProyecto(), "<span class='material-symbols-outlined'>folder</span>");
         botonProyecto.classList.add('btn-item-project');
         botonProyecto.id = listaProyectos.indexOf(project) + 1;
         botonProyecto.onclick = () => mostrarItemProyecto(project.getNombreProyecto());
-        sideBarDown.appendChild(botonProyecto);
+
+        const botonDeleteProyecto = crearButton('', "<span class='material-symbols-outlined'>close</span>");
+        botonDeleteProyecto.onclick = () => eliminarProyecto(project.getNombreProyecto());
+        botonDeleteProyecto.classList.add('btn-delete-project');
+
+        divButtonProject.appendChild(botonProyecto);
+        divButtonProject.appendChild(botonDeleteProyecto);
+
+        sideBarDown.appendChild(divButtonProject);
     });
 
     const botonNuevo = crearButton('Agregar proyecto', "<span class='material-symbols-outlined'>add_circle</span>");
@@ -367,6 +419,15 @@ function mostrarProyectos() {
 
     sideBarDown.appendChild(botonNuevo);
 
+}
+
+function eliminarProyecto(nombre) {
+    listaProyectos = listaProyectos.filter(project => project.getNombreProyecto() !== nombre);
+    limpiarMain();
+    mostrarProyectos();
+    const btnBandeja = document.getElementById('btnBandeja');
+    btnBandeja.classList.add('btn-side-bar-active');
+    mostrarTareas();
 }
 
 function limpiarProyectos() {
