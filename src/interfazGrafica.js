@@ -4,20 +4,23 @@ import Proyecto from "./proyecto";
 import { format, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';
 
 let listaTotal = new ListaTarea();
+
 let editar = false;
-let aux = new Tarea('Hacer los deberes del hogar', 'Sin Fecha', 'Alta');
-listaTotal.setListaTarea(aux);
 let listaProyectos = [];
 
 
 function header() {
     const header = document.getElementById('header');
     const titulo = document.createElement('h1');
+    const divLogo = document.createElement('div');
+    const spanLogo = document.createElement('span');
+    spanLogo.innerHTML="<span class='material-symbols-outlined'>check_box</span>";
+    divLogo.classList.add('header-logo');
 
-
-    titulo.textContent = 'J To-Do';
-
-    header.appendChild(titulo);
+    titulo.textContent = 'JList';
+    divLogo.appendChild(spanLogo);
+    divLogo.appendChild(titulo);
+    header.appendChild(divLogo);
 
 }
 function sideBar() {
@@ -63,6 +66,7 @@ function sideBar() {
 
     sideBarDown.appendChild(button);
     sideBar.appendChild(sideBarDown);
+    mostrarProyectos();
     setEventosSideBar();
 
 }
@@ -198,7 +202,7 @@ function mostrarItemProyecto(nombreProyecto) {
     let proyecto = listaProyectos.find(project => {
         return project.getNombreProyecto() === nombreProyecto
     });
-   
+
     if (proyecto) {
         proyecto.getListaTareas().forEach(task => {
             const div = document.createElement('div');
@@ -249,7 +253,7 @@ function eliminarTareaDelProyecto(nombreProyecto, nombreTarea) {
     });
 
     proyecto.setListaTareas(proyecto.getListaTareas().filter(task => task.getTitulo() !== nombreTarea));
-
+    guardarProyectosEnLocalStorage();
     mostrarItemProyecto(nombreProyecto);
 
 }
@@ -316,7 +320,7 @@ function formularioTareaItemProyecto(nombreProyecto) {
     botonAgregar.onclick = () => {
 
         if (agregarTareaProyecto(nombreProyecto)) {
-           
+
             limpiarMain();
             mostrarItemProyecto(nombreProyecto);
         }
@@ -382,6 +386,7 @@ function agregarTareaProyecto(nombreProyecto) {
         }
 
         proyecto.agregarTarea(tarea);
+        guardarProyectosEnLocalStorage();
         return true
     }
     return false;
@@ -424,10 +429,12 @@ function mostrarProyectos() {
 function eliminarProyecto(nombre) {
     listaProyectos = listaProyectos.filter(project => project.getNombreProyecto() !== nombre);
     limpiarMain();
+    guardarProyectosEnLocalStorage();
     mostrarProyectos();
     const btnBandeja = document.getElementById('btnBandeja');
     btnBandeja.classList.add('btn-side-bar-active');
     mostrarTareas();
+    
 }
 
 function limpiarProyectos() {
@@ -468,7 +475,7 @@ function agregarProyecto() {
         proyecto.setNombreProyecto(nombre);
         proyecto.setDescripcionProyecto(descripcion);
         listaProyectos.push(proyecto);
-        console.log(listaProyectos);
+        guardarProyectosEnLocalStorage();
 
         return true;
     } else {
@@ -751,7 +758,8 @@ function agregarTarea() {
     //creamos el objeto tarea y agregamos a la lista
     let tarea = new Tarea(nombre, fecha, prioridad);
     listaTotal.setListaTarea(tarea);
-    console.log(listaTotal.getListaTareas());
+    guardarTareasEnLocalStorage();
+
     return true;
 }
 
@@ -871,8 +879,9 @@ function limpiarFormulario() {
 }
 
 function eliminarTarea(titulo) {
-    listaTotal.setListaTareas(listaTotal.getListaTareas().filter(task => task.getTitulo() !== titulo));
+    listaTotal.agregarListaTareas(listaTotal.getListaTareas().filter(task => task.getTitulo() !== titulo));
     mostrarTareas();
+    guardarTareasEnLocalStorage();
 }
 
 function abrirEdicion(nombre) {
@@ -945,12 +954,81 @@ function editarTarea(indice) {
     tareaNueva.setPrioridad(prioridad);
     listaTotal.editListaTareas(indice, tareaNueva);
     editar = false;
+    guardarTareasEnLocalStorage();
     return true;
 }
+
+
+function cargarTareasDesdeLocalStorage() {
+    try {
+        const listaTareasJSON = localStorage.getItem('listaTareas');
+        if (listaTareasJSON) {
+            
+            let lista = JSON.parse(listaTareasJSON);
+         
+            lista.forEach(task =>{
+                let tarea = new Tarea(task._titulo, task._fechaTermino, task._prioridad)
+                listaTotal.setListaTarea(tarea);
+            });
+        }
+    } catch (error) {
+        console.error('Error al cargar las tareas desde el almacenamiento local:', error);
+    }
+}
+
+function guardarTareasEnLocalStorage() {
+    try {
+        const listaTareasJSON = JSON.stringify(listaTotal.getListaTareas());
+        localStorage.setItem('listaTareas', listaTareasJSON);
+    } catch (error) {
+        console.error('Error al guardar las tareas en el almacenamiento local:', error);
+    }
+}
+
+function cargarProyectosDesdeLocalStorage() {
+    try {
+        const listaProyectosJSON = localStorage.getItem('listaProyectos');
+        if (listaProyectosJSON) {
+            
+            let lista = JSON.parse(listaProyectosJSON);
+         
+            lista.forEach(item => {
+                let project = new Proyecto();
+                let listaAux = [];
+                project.setNombreProyecto(item._nombre);
+                project.setDescripcionProyecto(item._descripcion);
+
+                item._lista.forEach(task =>{
+                    let tarea = new Tarea(task._titulo, task._fechaTermino, task._prioridad);
+                    listaAux.push(tarea);
+                });
+                project.setListaTareas(listaAux);
+                listaProyectos.push(project);
+            });
+           
+        }
+    } catch (error) {
+        console.error('Error al cargar los proyectos desde el almacenamiento local:', error);
+    }
+}
+
+function guardarProyectosEnLocalStorage() {
+    try {
+        const listaProyectosJSON = JSON.stringify(listaProyectos);
+        localStorage.setItem('listaProyectos', listaProyectosJSON);
+    } catch (error) {
+        console.error('Error al guardar los proyectos en el almacenamiento local:', error);
+    }
+}
+
 function loadPage() {
+    cargarProyectosDesdeLocalStorage();
+    cargarTareasDesdeLocalStorage();
+    
     header();
     sideBar();
     main();
+    
 }
 
 export default loadPage;
