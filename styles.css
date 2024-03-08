@@ -478,11 +478,12 @@
 
 
 .main-project-item {
-    border: none;
+   
     padding: 10px;
     margin-bottom: 20px;
     border-radius: 5px;
-    width: 80vw;
+    width: 60vw;
+
 
     
 }
@@ -585,7 +586,7 @@
 }
 
 .main-project-task-item{
-    width: 80vw;
+    width: 60vw;
     margin-left: 20px;
     margin-right: 20px;
     margin-top: 10px;
@@ -608,4 +609,36 @@
 
 .main-project-task-item:hover{
     background-color: #ed9386;
+}
+
+.side-bar-down-div-project{
+    display: flex;
+}
+
+.btn-delete-project{
+    border: none;
+    background-color: transparent;
+}
+
+.btn-delete-project:hover{
+    color: red;
+    cursor: pointer;
+}
+
+#btn-delete-task-project{
+    background-color: transparent;
+    border: none;
+    color: black;
+
+}
+
+#btn-delete-task-project:hover{
+    cursor: pointer;
+}
+
+.main-titulos-tareas-project{
+    display: grid;
+    grid-template-columns: 6fr 1fr 1fr 1fr;
+    margin-top: 60px;
+    font-weight: bold;
 }
